@@ -79,8 +79,7 @@ int main()                                      // main function
               drive_speed(baseSpeed, baseSpeed);
               rotate180();
               end = previous;
-            }              
-            if(irRight >= target && irLeft >= target) {                   // No obstacles?
+            } else if(irRight >= target && irLeft >= target) {                   // No obstacles?
                 drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
                 current.dataLeft = baseSpeed;
                 current.dataRight = baseSpeed;
