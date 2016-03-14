@@ -7,6 +7,7 @@
 
 #include "simpletools.h"                        // Library includes
 #include "abdrive.h"
+#include "ping.h"
 
 int irLeft, irRight;                            // IR variables
 int target = 20;
@@ -14,6 +15,7 @@ int multiplier = 5;
 int baseSpeed = 24;
 int changeVal = 0;
 int atWall = 0;
+int distance = 0;
 
 struct node {
     int dataRight;
@@ -58,6 +60,10 @@ int main()                                      // main function
     struct node *previous;
     previous = (struct node *) malloc(sizeof(struct node));
     previous = begin;
+    
+    struct node *end;
+    end = (struct node *) malloc(sizeof(struct node));
+    
     int rampStep = 4;
     
     while(1)
@@ -69,6 +75,11 @@ int main()                                      // main function
             struct node *current;
             current = (struct node *) malloc(sizeof(struct node));
             
+            if(distance < 10) {
+              drive_speed(baseSpeed, baseSpeed);
+              rotate180();
+              end = previous;
+            }              
             if(irRight >= target && irLeft >= target) {                   // No obstacles?
                 drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
                 current.dataLeft = baseSpeed;
@@ -87,7 +98,6 @@ int main()                                      // main function
             previous->next = current;
             current->prev = previous;
             previous = current;
-            
         }
 
     }
