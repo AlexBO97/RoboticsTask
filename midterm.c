@@ -13,6 +13,7 @@ int target = 20;
 int multiplier = 5;
 int baseSpeed = 24;
 int changeVal = 0;
+int atWall = 0;
 
 struct node {
     int dataRight;
@@ -33,6 +34,10 @@ int getIR() {
         freqout(1, 1, 38000);
         irRight += input(2);
     }
+}
+
+void rotate180(){
+    drive_goto(51,51);
 }
 
 void calcChangeVal(int irVal){
@@ -60,27 +65,31 @@ int main()                                      // main function
         getIR();
         
         //Sensor navigation
-        struct node *current;
-        current = (struct node *) malloc(sizeof(struct node));
-        
-        if(irRight >= target && irLeft >= target) {                   // No obstacles?
-            drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
-            current.dataLeft = baseSpeed;
-            current.dataRight = baseSpeed;
-        } else if(irRight < target) {                                 // Just right obstacle?
-            calcChangeVal(irRight);
-            drive_speed(baseSpeed - changeVal, baseSpeed + changeVal);  // ...rotate left
-            current.dataLeft = baseSpeed - changeVal;
-            current.dataRight = baseSpeed + changeVal;
-        } else if(irLeft < target) {                                  // Just left obstacle?
-            calcChangeVal(irLeft);
-            drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
-            current.dataLeft = baseSpeed - changeVal;
-            current.dataRight = baseSpeed + changeVal;
-        }  
-        previous->next = current; 
-        current->prev = previous;       
-        previous = current;
+        while (!atWall) {
+            struct node *current;
+            current = (struct node *) malloc(sizeof(struct node));
+            
+            if(irRight >= target && irLeft >= target) {                   // No obstacles?
+                drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
+                current.dataLeft = baseSpeed;
+                current.dataRight = baseSpeed;
+            } else if(irRight < target) {                                 // Just right obstacle?
+                calcChangeVal(irRight);
+                drive_speed(baseSpeed - changeVal, baseSpeed + changeVal);  // ...rotate left
+                current.dataLeft = baseSpeed - changeVal;
+                current.dataRight = baseSpeed + changeVal;
+            } else if(irLeft < target) {                                  // Just left obstacle?
+                calcChangeVal(irLeft);
+                drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
+                current.dataLeft = baseSpeed - changeVal;
+                current.dataRight = baseSpeed + changeVal;
+            }
+            previous->next = current;
+            current->prev = previous;
+            previous = current;
+            
+        }
+
     }
     
 }
