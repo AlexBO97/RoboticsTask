@@ -112,24 +112,20 @@ int main()                                      // main function
     previous = (struct node *) malloc(sizeof(struct node));
     previous = begin;
     
-    struct node *end;
-    end = (struct node *) malloc(sizeof(struct node));
-    
     int rampStep = 4;
     
     while(1)
     {
-        getIR();
-        
-        //Sensor navigation
+        // Sensor navigation
         if (!atWall) {
             struct node *current;
             current = (struct node *) malloc(sizeof(struct node));
+            getIR();
             
             if(distance < 10) {
               drive_speed(baseSpeed, baseSpeed);
               rotate180();
-              end = previous;
+              current = previous;
             } else if(irRight >= target && irLeft >= target) {                   // No obstacles?
                 drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
                 current.dataLeft = baseSpeed;
@@ -149,8 +145,12 @@ int main()                                      // main function
             current->prev = previous;
             writeToFile(current.DataLeft,current.dataRight);
             previous = current;
-        }
-
-    }
-    
+        } else { // Back tracking
+          if(current->prev != NULL) {
+            drive_speed(current.dataRight, current.dataLeft);
+            previous = current;
+            current = current->prev;
+          }            
+        }          
+    }    
 }
