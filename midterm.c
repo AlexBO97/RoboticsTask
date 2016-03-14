@@ -71,7 +71,7 @@ int main()                                      // main function
         getIR();
         
         //Sensor navigation
-        while (!atWall) {
+        if (!atWall) {
             struct node *current;
             current = (struct node *) malloc(sizeof(struct node));
             
