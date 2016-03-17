@@ -5,7 +5,7 @@
  
  */
 
-int DO = 22, CLK = 23, DI = 24, CS = 25;            // SD card pins on Activity Board
+//int DO = 22, CLK = 23, DI = 24, CS = 25;            // SD card pins on Activity Board
 
 // void writeToFile(int x, int y)
 // {
@@ -111,53 +111,59 @@ int main()                                      // main function
     begin->dataRight = 0;
     
     struct node *previous;
-    previous = (struct node *) malloc(sizeof(struct node));
     previous = begin;
     
     int rampStep = 4;
     
-    struct node *current;
-    current = (struct node *) malloc(sizeof(struct node));
+    
     
     while(1)
     {
-        distance = ping_cm(8);
+        
         // Sensor navigation
         if (!atWall) {
             
             getIR();
+            distance = ping_cm(8);
+            
+            struct node *current;
+            current = (struct node *) malloc(sizeof(struct node));
             
             if(distance < 15) {
               drive_speed(baseSpeed, baseSpeed);
               rotate180();
               atWall = 1;
-              current = previous->prev;
-            } else if(irRight >= target && irLeft >= target) {                   // No obstacles?
-                drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
-                current->dataLeft = baseSpeed;
-                current->dataRight = baseSpeed;
-            } else if(irRight < target) {                                 // Just right obstacle?
-                calcChangeVal(irRight);
-                drive_speed(baseSpeed - changeVal, baseSpeed + changeVal);  // ...rotate left
-                current->dataLeft = baseSpeed - changeVal;
-                current->dataRight = baseSpeed + changeVal;
-            } else if(irLeft < target) {                                  // Just left obstacle?
-                calcChangeVal(irLeft);
-                drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
-                current->dataLeft = baseSpeed - changeVal;
-                current->dataRight = baseSpeed + changeVal;
-            }
-            previous->next = current;
-            current->prev = previous;
-            //writeToFile(current->DataLeft,current->dataRight);
-            previous = current;
+              current = previous;
+            } else {
+              if(irRight >= target && irLeft >= target) {                   // No obstacles?
+                  drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
+                 current->dataLeft = baseSpeed;
+                 current->dataRight = baseSpeed;
+              } else if(irRight < target) {                                 // Just right obstacle?
+                 calcChangeVal(irRight);
+                 drive_speed(baseSpeed - changeVal, baseSpeed + changeVal);  // ...rotate left
+                 current->dataLeft = baseSpeed - changeVal;
+                 current->dataRight = baseSpeed + changeVal;
+              } else if(irLeft < target) {                                  // Just left obstacle?
+                  calcChangeVal(irLeft);
+                  drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
+                  current->dataLeft = baseSpeed + changeVal;
+                  current->dataRight = baseSpeed - changeVal;
+              }
+              current->prev = previous;
+              previous->next = current;
+              pause(50);
+            
+              //writeToFile(current->DataLeft,current->dataRight);
+              previous = current;
+            }             
         } else { // Back tracking
-          if(current != begin) {
-            print("%d %d\n", current->dataLeft, current->dataRight);
-            drive_speed(current->dataRight, current->dataLeft);
-            current = current->prev;
+          if(previous->prev != NULL) {
+            print("%d %d\n", previous->dataLeft, previous->dataRight);
+            drive_speed(previous->dataRight, previous->dataLeft);
+            previous = previous->prev;
+            pause(50);
           } else {
-            print("Hello");
             drive_speed(0, 0);
           }                       
         }          
