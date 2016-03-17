@@ -63,8 +63,8 @@
 
 
 int irLeft, irRight;                            // IR variables
-int target = 20;
-int multiplier = 5;
+int target = 8;
+int multiplier = 4;
 int baseSpeed = 24;
 int changeVal = 0;
 int atWall = 0;
@@ -152,7 +152,7 @@ int main()                                      // main function
               }
               current->prev = previous;
               previous->next = current;
-              pause(50);
+              //pause(50);
             
               //writeToFile(current->DataLeft,current->dataRight);
               previous = current;
@@ -162,7 +162,7 @@ int main()                                      // main function
             print("%d %d\n", previous->dataLeft, previous->dataRight);
             drive_speed(previous->dataRight, previous->dataLeft);
             previous = previous->prev;
-            pause(50);
+            pause(65);
           } else {
             drive_speed(0, 0);
           }                       
