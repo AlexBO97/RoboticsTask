@@ -63,9 +63,9 @@
 
 
 int irLeft, irRight;                            // IR variables
-int target = 8;
-int multiplier = 4;
-int baseSpeed = 24;
+int target = 18;
+int multiplier = 5;
+int baseSpeed = 48;
 int changeVal = 0;
 int atWall = 0;
 int distance;
@@ -92,6 +92,7 @@ void getIR() {
 }
 
 void rotate180(){
+    drive_speed(1,1);
     drive_goto(51,-51);
 }
 
@@ -135,15 +136,22 @@ int main()                                      // main function
               atWall = 1;
               current = previous;
             } else {
-              if(irRight >= target && irLeft >= target) {                   // No obstacles?
+              if(irRight >= target && irLeft >= target || ((irRight - irLeft > -3) && (irRight - irLeft < 3))) {                   // No obstacles?
                   drive_speed(baseSpeed, baseSpeed);                          // ...full speed ahead
                  current->dataLeft = baseSpeed;
                  current->dataRight = baseSpeed;
               } else if(irRight < target) {                                 // Just right obstacle?
+                 if(irLeft < irRight) {
+                   calcChangeVal(irLeft);
+                  drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
+                  current->dataLeft = baseSpeed + changeVal;
+                  current->dataRight = baseSpeed - changeVal;
+                 } else {                  
                  calcChangeVal(irRight);
                  drive_speed(baseSpeed - changeVal, baseSpeed + changeVal);  // ...rotate left
                  current->dataLeft = baseSpeed - changeVal;
                  current->dataRight = baseSpeed + changeVal;
+               }                 
               } else if(irLeft < target) {                                  // Just left obstacle?
                   calcChangeVal(irLeft);
                   drive_speed(baseSpeed + changeVal, baseSpeed - changeVal);  // ...rotate right
@@ -152,7 +160,7 @@ int main()                                      // main function
               }
               current->prev = previous;
               previous->next = current;
-              //pause(50);
+              pause(50);
             
               //writeToFile(current->DataLeft,current->dataRight);
               previous = current;
@@ -162,7 +170,7 @@ int main()                                      // main function
             print("%d %d\n", previous->dataLeft, previous->dataRight);
             drive_speed(previous->dataRight, previous->dataLeft);
             previous = previous->prev;
-            pause(65);
+            pause(120);
           } else {
             drive_speed(0, 0);
           }                       
