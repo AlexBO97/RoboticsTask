@@ -53,8 +53,33 @@ double calcFinalAngle(double dX, double dY) {
     angle = atan( dY / dX );
   }     
   return angle; 
-}  
+}
+
+void calcChangeVal(int irVal){
+    int difference = target - irVal;
+    changeVal = multiplier * difference;
+}
 
 double toDegrees(double radians) {
   return radians * ( 180 / 3.14159265358979323846 );
-}  
+}
+
+void rotate180(){
+    drive_speed(1,1);
+    drive_goto(51,-51);
+}
+
+void getIR() {
+    irLeft = 0;
+    irRight = 0;
+    for (int dacVal = 0; dacVal < 160; dacVal += 8) {
+        dac_ctr(26, 0, dacVal);
+        freqout(11, 1, 38000);
+        irLeft += input(10);
+        
+        dac_ctr(27, 1, dacVal);
+        freqout(1, 1, 38000);
+        irRight += input(2);
+    }
+}
+
