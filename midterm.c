@@ -2,7 +2,7 @@
 #include "abdrive.h"
 #include "ping.h"
 #include "logging.h"
-
+#include "sensing.h"
 
 const int target = 18;
 const int multiplier = 5;
@@ -30,27 +30,27 @@ int main()
 {
     low(26);
     low(27);
-    
+
     struct node *begin;
     begin = (struct node *) malloc(sizeof(struct node));
     begin->prev = NULL;
     begin->dataLeft = 0;
     begin->dataRight = 0;
-    
+
     struct node *previous;
     previous = begin;
-    
+
     int rampStep = 4;
-    
+
     while(1)
     {
         if (!atWall) {  // Sensor navigation
             getIR();
             distance = ping_cm(8);
-            
+
             struct node *current;
             current = (struct node *) malloc(sizeof(struct node));
-            
+
             if (distance < 15) {
                 drive_speed(baseSpeed, baseSpeed);
                 rotate180();
@@ -83,16 +83,16 @@ int main()
                 previous->next = current;
                 pause(50);
                 previous = current;
-            }             
+            }
         } else {    // Back tracking
             if (previous->prev != NULL) {
-                print("%d %d\n", previous->dataLeft, previous->dataRight);
+                //print("%d %d\n", previous->dataLeft, previous->dataRight);
                 drive_speed(previous->dataRight, previous->dataLeft);
                 previous = previous->prev;
                 pause(120);
             } else {
                 drive_speed(0, 0);
             }
-        }          
+        }
     }
 }

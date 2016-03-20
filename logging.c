@@ -16,15 +16,15 @@ double calcMidRad(double lDist, double rDist, double angle) {
 
 double calcXChangeStraight(double dist, double runningAngle) {
   return dist * cos(runningAngle);
-}  
+}
 
 double calcYChangeStraight(double dist, double runningAngle) {
   return dist * sin(runningAngle);
-}  
+}
 
 double calcXChangeAngle(double midRad, double angle) {
   return midRad - midRad * sin(angle);
-}     
+}
 
 double calcYChangeAngle(double midRad, double angle, double runningAngle) {
   double p = midRad * sin(angle + runningAngle);
@@ -51,8 +51,8 @@ double calcFinalAngle(double dX, double dY) {
     angle = (3.14159265358979323846 + atan( dY / dX ));
   } else {
     angle = atan( dY / dX );
-  }     
-  return angle; 
+  }
+  return angle;
 }
 
 double toDegrees(double radians) {
@@ -63,18 +63,3 @@ void rotate180() {
     drive_speed(1,1);
     drive_goto(51,-51);
 }
-
-void getIR() {
-    irLeft = 0;
-    irRight = 0;
-    for (int dacVal = 0; dacVal < 160; dacVal += 8) {
-        dac_ctr(26, 0, dacVal);
-        freqout(11, 1, 38000);
-        irLeft += input(10);
-        
-        dac_ctr(27, 1, dacVal);
-        freqout(1, 1, 38000);
-        irRight += input(2);
-    }
-}
-
