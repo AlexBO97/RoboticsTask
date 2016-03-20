@@ -1,11 +1,15 @@
 #include "simpletools.h"
 #include "abdrive.h"
 #include "ping.h"
+#include "logging.h"
+
+
+const int target = 18;
+const int multiplier = 5;
+const int baseSpeed = 48;
+const int irDifference = 3;
 
 int irLeft, irRight;    // IR variables
-int target = 18;
-int multiplier = 5;
-int baseSpeed = 48;
 int changeVal = 0;
 int atWall = 0;
 int distance;
@@ -16,6 +20,11 @@ struct node {
     struct Node* next;
     struct Node* prev;
 };
+
+void calcChangeVal(int irVal){
+    int difference = target - irVal;
+    changeVal = multiplier * difference;
+}
 
 int main()
 {
@@ -48,7 +57,7 @@ int main()
                 atWall = 1;
                 current = previous;
             } else {
-                if(irRight >= target && irLeft >= target || ((irRight - irLeft > -3) && (irRight - irLeft < 3))){   // No obstacles?
+                if(irRight >= target && irLeft >= target || ((irRight - irLeft > -1*irDifference) && (irRight - irLeft < irDifference))){   // No obstacles?
                     drive_speed(baseSpeed, baseSpeed);  // ...full speed ahead
                     current->dataLeft = baseSpeed;
                     current->dataRight = baseSpeed;

@@ -20,10 +20,7 @@ double calcYChangeAngle(double midRad, double angle, double runningAngle);
 
 double calcHyp(double dX, double dY);
 
-
 double calcFinalAngle(double dX, double dY);
-
-void calcChangeVal(int irVal);
 
 double toDegrees(double radians);
 

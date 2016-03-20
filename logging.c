@@ -55,16 +55,11 @@ double calcFinalAngle(double dX, double dY) {
   return angle; 
 }
 
-void calcChangeVal(int irVal){
-    int difference = target - irVal;
-    changeVal = multiplier * difference;
-}
-
 double toDegrees(double radians) {
   return radians * ( 180 / 3.14159265358979323846 );
 }
 
-void rotate180(){
+void rotate180() {
     drive_speed(1,1);
     drive_goto(51,-51);
 }
